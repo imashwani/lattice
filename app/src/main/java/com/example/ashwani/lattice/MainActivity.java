@@ -5,30 +5,61 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.ashwani.lattice.Data.ApiUtils;
+import com.example.ashwani.lattice.Data.UserJson2pojoSchema;
+import com.example.ashwani.lattice.Data.UserService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText userNameET, passwordET, addressET, emailET, phoneET;
     private Button signupButton;
     private AppDatabase db;
+    RecyclerView recyclerView;
+    UserService userService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         findViews();//find the views by id
+
+        userService= ApiUtils.getUserService();
+
          db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "user-database").build();
+
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new DatabaseAsync().execute();
+                userService.saveUser(userNameET.getText().toString(),
+                        addressET.getText().toString(),emailET.getText().toString(),
+                        phoneET.getText().toString(),passwordET.getText().toString()).enqueue(new Callback<UserJson2pojoSchema>() {
+                    @Override
+                    public void onResponse(Call<UserJson2pojoSchema> call, Response<UserJson2pojoSchema> response) {
+                        Toast.makeText(MainActivity.this,"inserted into retrofit",Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserJson2pojoSchema> call, Throwable t) {
+
+                    }
+                });
             }
         });
 
@@ -134,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 isFormComplete();
             }
         });
+
 
     }
 
