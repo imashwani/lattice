@@ -11,14 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ashwani.lattice.Data.Resp;
 import com.example.ashwani.lattice.Data.UserApi;
 import com.google.gson.JsonObject;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,14 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "user-database").build();
-
-        Button press = findViewById(R.id.press);
-        press.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new FetchDataAsync().execute();
-            }
-        });
 
 
         signupButton.setOnClickListener(new View.OnClickListener() {
@@ -232,30 +221,6 @@ public class MainActivity extends AppCompatActivity {
         emailET = findViewById(R.id.user_email);
         phoneET = findViewById(R.id.user_phone);
         signupButton = findViewById(R.id.signup_button);
-    }
-
-    private class FetchDataAsync extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            List<User> userList = db.userDao().getAll();
-
-            StringBuilder userStringBuilder = new StringBuilder("");
-            for (int i = 0; i < userList.size(); i++) {
-                User u = userList.get(i);
-                userStringBuilder.append(u.getUserName() + " " + u.getUserAddress() + " \n");
-            }
-
-            return userStringBuilder.toString();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            TextView tv = findViewById(R.id.login_title);
-            tv.setText(s);
-
-        }
     }
 
     private class DatabaseAsync extends AsyncTask<Void, Void, Void> {
